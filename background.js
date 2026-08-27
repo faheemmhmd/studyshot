@@ -55,13 +55,51 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
     }
 
     if (msg.type === 'CAPTURE_VISIBLE') {
+      const tabId = sender.tab?.id;
       const windowId = sender.tab?.windowId;
-      if (windowId == null) throw new Error('No active browser window.');
-      const dataUrl = await chrome.tabs.captureVisibleTab(windowId, {
-        format: 'jpeg',
-        quality: 92
+      if (tabId == null || windowId == null) throw new Error('No active browser tab.');
+
+      // Hide the StudyShot root at the source of the capture. Opacity alone can
+      // race Chrome's compositor, so we remove it from layout/rendering before
+      // capture and restore the exact previous inline style afterwards.
+      const hidden = await chrome.scripting.executeScript({
+        target: { tabId },
+        func: () => {
+          const root = document.getElementById('studyshot-root');
+          if (!root) return null;
+          const previous = root.getAttribute('style');
+          root.style.setProperty('display', 'none', 'important');
+          root.style.setProperty('visibility', 'hidden', 'important');
+          return previous;
+        }
       });
-      sendResponse({ ok: true, dataUrl });
+      const previousStyle = hidden?.[0]?.result ?? null;
+
+      try {
+        await chrome.scripting.executeScript({
+          target: { tabId },
+          func: () => new Promise(resolve => {
+            requestAnimationFrame(() => requestAnimationFrame(resolve));
+          })
+        });
+
+        const dataUrl = await chrome.tabs.captureVisibleTab(windowId, {
+          format: 'jpeg',
+          quality: 92
+        });
+        sendResponse({ ok: true, dataUrl });
+      } finally {
+        await chrome.scripting.executeScript({
+          target: { tabId },
+          args: [previousStyle],
+          func: (style) => {
+            const root = document.getElementById('studyshot-root');
+            if (!root) return;
+            if (style === null) root.removeAttribute('style');
+            else root.setAttribute('style', style);
+          }
+        }).catch(() => {});
+      }
       return;
     }
 
