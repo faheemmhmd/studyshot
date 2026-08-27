@@ -1,0 +1,27 @@
+{
+  "manifest_version": 3,
+  "name": "StudyShot PDF",
+  "version": "2.2.0",
+  "description": "Premium lecture screenshot capture with a live capture tray and selectable PDF page formats.",
+  "permissions": ["activeTab", "scripting", "tabs", "downloads"],
+  "action": {
+    "default_title": "StudyShot PDF"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"],
+      "css": ["content.css"],
+      "run_at": "document_idle"
+    }
+  ],
+  "commands": {
+    "open-studyshot": {
+      "suggested_key": { "default": "Ctrl+Shift+S" },
+      "description": "Open StudyShot PDF"
+    }
+  }
+}
