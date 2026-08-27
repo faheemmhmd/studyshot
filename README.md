@@ -113,6 +113,11 @@ git clone https://github.com/YOUR-USERNAME/studyshot.git
 ```
 
 Or download the repository as a ZIP and extract it.
+## 📥 Download
+
+**[Download StudyShot v2.2.0](https://github.com/faheemmhmd/studyshot/releases/latest)**
+
+Download the latest release and install it as an unpacked Chrome extension.
 
 ### 2. Open Chrome Extensions
 
