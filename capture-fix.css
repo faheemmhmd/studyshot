@@ -1,0 +1,10 @@
+/* Capture reliability fix
+   The normal UI uses opacity for smooth transitions, but browser screenshot capture
+   can occasionally race the compositor and include translucent extension UI.
+   During capture, remove the UI from layout and hit-testing completely. */
+#studyshot-root .ss-capture-hidden {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
