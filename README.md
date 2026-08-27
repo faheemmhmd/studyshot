@@ -152,16 +152,8 @@ studyshot/
 ├── background.js
 ├── content.js
 ├── content.css
-├── pdf.js
-├── popup.html
-├── popup.js
-├── popup.css
 ├── README.md
 ├── LICENSE
-└── icons/
-    ├── icon16.png
-    ├── icon48.png
-    └── icon128.png
 ```
 
 > The exact file structure may evolve as the project develops.
